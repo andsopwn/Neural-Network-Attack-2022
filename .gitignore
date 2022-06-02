@@ -1,52 +1,38 @@
-# Prerequisites
-*.d
+# Ignore all
+*
 
-# Object files
-*.o
-*.ko
-*.obj
-*.elf
+# Unignore all with extensions
+!*.*
 
-# Linker output
-*.ilk
-*.map
-*.exp
+# Unignore all dirs
+!*/
 
-# Precompiled Headers
-*.gch
-*.pch
+# MAC OS
+.DS_Store
 
-# Libraries
-*.lib
-*.a
-*.la
-*.lo
+# Jupyter Notebook
+*/.ipynb_checkpoints
+.ipynb_checkpoints/
 
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
+# Colab
+for_commit_from_colab_to_github.ipynb
 
-# Executables
+# Package
+*.class
+*.jar
+*.war
+*.db
+*.ear
 *.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
+*.o
 
-# Debug files
-*.dSYM/
-*.su
-*.idb
-*.pdb
+# VS Code
+tasks.json
+c_cpp_properties.json
+launch.json
+settings.json
+.vscode
+*.dsYM
 
-# Kernel Module Compile Results
-*.mod*
-*.cmd
-.tmp_versions/
-modules.order
-Module.symvers
-Mkfile.old
-dkms.conf
+# Code Runner
+tempCodeRunnerFile.c
