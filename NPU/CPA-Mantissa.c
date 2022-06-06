@@ -13,8 +13,8 @@ ff  tt;
 #define     IPN     1000
 #define     STR     -2.55
 #define     ENR     2.55
-#define     STP     3000
-#define     EDP     18000
+#define     STP     0
+#define     EDP     24000
 
 
 int main() {
@@ -25,6 +25,7 @@ int main() {
     int         trNum   = 1000;
     int         curkey, maxkey;
     int         x, y;
+    int         hw;
     double      **trace;
     double      *Sx   = (double*)calloc(trLen, sizeof(double));
     double      *Sxx  = (double*)calloc(trLen, sizeof(double));
@@ -32,7 +33,8 @@ int main() {
     double      *corr = (double*)calloc(trLen, sizeof(double));
     double      Sy, Syy;
     double      max, maxVal, maxLoc;
-    float       input[IPN];
+    double      a, b, c;
+    float       input[IPN + 1];
     float       fdum;
     float       flagPTR = (ENR - STR) / IPN;
     
@@ -55,15 +57,18 @@ int main() {
     wt.p.sign = 0;
     wt.num = 0;
 
+    /*      MODEL Sx      */
     for(int i = 0 ; i < trNum ; i++) {
         for(int j = STP ; j < EDP ; j++) {
             Sx[i]  += trace[i][j];
             Sxx[i] += trace[i][j] * trace[i][j];
         }
     }
+
     printf("%lf\n", input[0]);
 
-    for(int t = 0 ; t < 24 / bit ; t++) {
+    int t, j, k, i;
+    for(t = 0 ; t < 24 / bit ; t++) {
         max = 0;    maxVal = 0;     maxLoc = 0;
 
         for(curkey = 0 ; curkey < bit ; curkey++) { // get corr
@@ -74,21 +79,45 @@ int main() {
             memset(Sxy,  0 , sizeof(double) * trLen);
             memset(corr, 0 , sizeof(double) * trLen);
 
-            for(int i = 0 ; i < trNum ; i++) {
+            for(i = 0 ; i < trNum ; i++) {
                 ip.num = input[0];
-
                 x = ip.p.mantissa;
+                //  1.m ip = 1.ex(1) + ip' / 128 | 1 * ip'/128
                 x += 0b00000000100000000000000000000000;
-                y = x * (curkey + 128);
                 
-                if(t = 0) {
-                    y = getMantissaHamming(y & 0x7f000000);
-                    
-                }
+                y = x * (curkey + 128);
+
+                hw = 0;
+                y >>= 8;
+                for(j = 0 ; j < 8 ; j++)
+                    hw += (y >> j) & 1;
+
+
+                Sy  += hw;
+                Syy += hw * hw;
+
+                for(k = STP ; k < EDP ; k++)
+                    Sxy[k] += (double)(trace[i][k] * hw);
             }
         }
+
+        for(int j = STP ; j < EDP ; j++) {
+            a = (double)trNum * Sxy[j] - Sx[j] * Sy;
+            b = sqrt((double)trNum * Sxx[j] - Sx[j] * Sx[j]);
+            c = sqrt((double)trNum * Syy - Sy * Sy);
+            
+            corr[j] = a / (b * c);
+            if(fabs(corr[j] > max)) {
+                maxkey = curkey;
+                maxLoc = j;
+                max = fabs(corr[j]);
+            }
+        }
+        fflush(stdout);
+        printf("maxCorr[%lf] | maxkey[%d] | maxLoc[%lf]\n", max, maxkey, maxLoc);
+
     }
-    /*      get Correlation     */
+
 
     /*      Heap Free           */  
     free(Sx);
@@ -99,3 +128,4 @@ int main() {
         free(trace[i]);
     free(trace);
 }
+

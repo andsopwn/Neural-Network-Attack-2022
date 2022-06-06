@@ -1,4 +1,4 @@
-a.c
+
 # Ignore all
 *
 
@@ -37,3 +37,4 @@ settings.json
 
 # Code Runner
 tempCodeRunnerFile.c
+a.c
