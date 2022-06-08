@@ -8,24 +8,24 @@ ff  ip;
 ff  wt;
 ff  tt;
 
-#define     bit      3
-#define     DIR     "..//..//..//부채널연구//SCA_Experiment//a.npy"
+//#define     DIR     "..//..//..//부채널연구//SCA_Experiment//a.npy"
+#define     DIR     "/Users/louxsoen/Documents/Univ/SCA_Experiment/a.npy"
+
 #define     IPN     1000
 #define     STR     -2.55
 #define     ENR     2.55
 #define     STP     0
 #define     EDP     24000
 
+#define     bitArea     3       // 비트 처리 단위 (3비트씩 나누어서 CPA)
 
 int main() {
     float       target = 0;
     char        buf[256];
-    /*      CPA Attack Info     */
     int         trLen   = 24000;
     int         trNum   = 1000;
-    int         curkey, maxkey;
+    int         key, maxkey;
     int         x, y;
-    int         hw;
     double      **trace;
     double      *Sx   = (double*)calloc(trLen, sizeof(double));
     double      *Sxx  = (double*)calloc(trLen, sizeof(double));
@@ -37,11 +37,13 @@ int main() {
     float       input[IPN + 1];
     float       fdum;
     float       flagPTR = (ENR - STR) / IPN;
+    unsigned int    hw;         // 해밍웨이트를 구할 임시 값
+    unsigned int    hw_iv;      // 해밍웨이트를 구한 값
     
     for(float i = 0, f = STR ; i <= IPN ; i++, f += flagPTR)
         input[(int)i] = f;
     
-    FILE        *RFP = fopen(DIR, "rb");
+    FILE       *RFP = fopen(DIR, "rb");
     if(RFP == NULL) { puts("Failed to load trace!!\n"); return -1; }
 
     trace = (double**)calloc(trNum, sizeof(double*));
@@ -65,39 +67,61 @@ int main() {
         }
     }
 
-    printf("%lf\n", input[0]);
-
-    int t, j, k, i;
-    for(t = 0 ; t < 24 / bit ; t++) {
+    int j, k, i;
+    for(int bitNum = 0 ; bitNum < 8 ; bitNum++) {
         max = 0;    maxVal = 0;     maxLoc = 0;
-
-        for(curkey = 0 ; curkey < bit ; curkey++) { // get corr
-            Sy = 0;
-            Syy = 0;
-
-
+        for(key = 0 ; key < 128 ; key++) { // get corr
+            Sy = 0;     Syy = 0;
             memset(Sxy,  0 , sizeof(double) * trLen);
             memset(corr, 0 , sizeof(double) * trLen);
 
             for(i = 0 ; i < trNum ; i++) {
+                printf("%d");
                 ip.num = input[0];
                 x = ip.p.mantissa;
+                x += 0x800000;
                 //  1.m ip = 1.ex(1) + ip' / 128 | 1 * ip'/128
-                x += 0b00000000100000000000000000000000;
-                
-                y = x * (curkey + 128);
+                y = x * (key + 128);
 
-                hw = 0;
-                y >>= 8;
-                for(j = 0 ; j < 8 ; j++)
-                    hw += (y >> j) & 1;
+                if(bitNum == 0) {
+                    hw &= 0x7f000000;
+                    for(k = 24 ; k < 31 ; k++) { hw_iv += (hw >> i) & 0b1; }
+                } 
+                else if(bitNum == 1) {
+                    hw &= 0x0fe00000;
+                    for(k = 21 ; k < 28 ; k++) { hw_iv += (hw >> i) & 0b1; }
+                } 
+                else if(bitNum == 2) {
+                    hw &= 0x0fe00000;
+                    for(k = 18 ; k < 25 ; k++) { hw_iv += (hw >> i) & 0b1; }
+                } 
+                else if(bitNum == 3) {
+                    hw &= 0x01fc0000;
+                    for(k = 15 ; k < 22 ; k++) { hw_iv += (hw >> i) & 0b1; }
+                } 
+                else if(bitNum == 4) {
+                    hw &= 0x0007f000;
+                    for(k = 12 ; k < 19 ; k++) { hw_iv += (hw >> i) & 0b1; }
+                } 
+                else if(bitNum == 5) {
+                    hw &= 0x0000fe00;
+                    for(k = 9 ; k < 16 ; k++) { hw_iv += (hw >> i) & 0b1; }
+                } 
+                else if(bitNum == 6) {
+                    hw &= 0x00001f00;
+                    for(k = 6 ; k < 13 ; k++) { hw_iv += (hw >> i) & 0b1; }
+                } 
+                else if(bitNum == 7) {
+                    hw &= 0x000003f0;
+                    for(k = 3 ; k < 10 ; k++) { hw_iv += (hw >> i) & 0b1; }
+                }
 
-
-                Sy  += hw;
-                Syy += hw * hw;
+                Sy  += hw_iv;
+                Syy += hw_iv * hw_iv;
 
                 for(k = STP ; k < EDP ; k++)
                     Sxy[k] += (double)(trace[i][k] * hw);
+                    //print(seojun*STP);
             }
         }
 
@@ -107,17 +131,19 @@ int main() {
             c = sqrt((double)trNum * Syy - Sy * Sy);
             
             corr[j] = a / (b * c);
-            if(fabs(corr[j] > max)) {
-                maxkey = curkey;
+            if(abs(corr[j] > max)) {
+                maxkey = key;
                 maxLoc = j;
                 max = fabs(corr[j]);
             }
+            fflush(stdout);
+            printf("maxLoc[%f] maxkey[%02X] maxbit[%02X] Corr[%lf]\n", maxLoc, maxkey, maxkey & 0x70, max);
         }
-        fflush(stdout);
-        printf("maxCorr[%lf] | maxkey[%d] | maxLoc[%lf]\n", max, maxkey, maxLoc);
+        //fflush(stdout);
+        //printf("maxCorr[%lf] | maxkey[%d] | maxLoc[%lf]\n", max, maxkey, maxLoc);
+
 
     }
-
 
     /*      Heap Free           */  
     free(Sx);
