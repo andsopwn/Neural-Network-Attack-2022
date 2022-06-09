@@ -8,8 +8,8 @@ ff  ip;
 ff  wt;
 ff  tt;
 
-//#define     DIR     "..//..//..//부채널연구//SCA_Experiment//a.npy"
-#define     DIR     "/Users/louxsoen/Documents/Univ/SCA_Experiment/a.npy"
+#define     DIR     "..//..//..//부채널연구//SCA_Experiment//a.npy"
+//#define     DIR     "/Users/louxsoen/Documents/Univ/SCA_Experiment/a.npy"
 
 #define     IPN     1000
 #define     STR     -2.55
@@ -76,8 +76,7 @@ int main() {
             memset(corr, 0 , sizeof(double) * trLen);
 
             for(i = 0 ; i < trNum ; i++) {
-                printf("%d");
-                ip.num = input[0];
+                ip.num = input[i];
                 x = ip.p.mantissa;
                 x += 0x800000;
                 //  1.m ip = 1.ex(1) + ip' / 128 | 1 * ip'/128
