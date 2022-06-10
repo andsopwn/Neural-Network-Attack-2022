@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "NNCPA.h"
 
-int main() {
+void test1() {
     float aa = 3.5919;
     ff a; a.num = aa;
     unsigned int x, y;
@@ -30,4 +30,15 @@ int main() {
         if((y >> i) & 1 == 1) printf("1");
         else             printf("0");
     } puts("");
+}
+
+void test2() {
+    unsigned int    a = 0x7f000000;
+    unsigned int    b = 0;
+    for(int i = 0 ; i < 7 ; i++)
+    printf("%08X\n", b = a >> 4 * i);
+}
+
+int main() {
+    test2();
 }

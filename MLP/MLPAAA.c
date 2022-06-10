@@ -22,7 +22,7 @@ int main() {
     float   SL0[HIDDEN];           // Sum Of Weight Input Layer to Hidden Layer[1]
     float   SL1[OUTPUT];           // Sum Of Weight Hidden Layer[1] to Output Layer
     float   AFR[HIDDEN];           // Result of Activation Function
-    float   X[INPUT] = { 1.0 };    // Input Data
+    float   X[INPUT] = { 1, 2, 3 };    // Input Data
     float   Y[OUTPUT];             // Output Data
 
     // Weight Setting
@@ -50,7 +50,7 @@ int main() {
     }
     printf("Activation Function First Layer\n");
 	for(i = 0 ; i < HIDDEN ; i++)
-	    printf("%d : %f \n", i + 1, AFR[i]);
+	    printf("%d : %f \t %f\n", i + 1, AFR[i], L0[2][i]);
     puts("");
 
 /*              Hidden[1] Layer - Output Layer            */
