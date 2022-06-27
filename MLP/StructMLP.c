@@ -1,42 +1,28 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#define     LAYERNUM    3
-
-float   sigmoid(float h)    { return (1 / (1 + exp((-1)*h))); }
-float   hypertan(float h)   { return (2 / (1 + exp(-2 * h)) - 1); }
-float   relu(float h)       { return (h > 0 ? h : 0);     }
-
-typedef struct Node {
-    float   weight;
-    float   output;
-}   nd;
-
-typedef struct Layer {
-    int     num;      // 노드의 개수
-    nd      *nd;      
-}   ld;
-
-void weight_initialization(ld *Layer, float setting, int index) {
-    for(int i = 0 ; i < Layer[index].num ; i++)    Layer[index].nd[i].weight = setting;
-}
+#include "StrcutMLP.h"
 
 void weight_lprint(ld *Layer) {
     for(int i = 0 ; i < LAYERNUM ; i++) {
         fflush(stdout);
         printf("Layer[%d]\tWeight ", i);
-        for(int k = 0 ; k < Layer[i].num ; k++)     printf("%.3f\t", Layer[i].nd[k].weight);
+        for(int k = 0 ; k < Layer[i].num ; k++)     printf("\t[%.2f]\t", Layer[i].nd[k].weight);
         printf("(%d Nodes)\n\t\t------ ", Layer[i].num);
-        for(int k = 0 ; k < Layer[i].num ; k++)     printf("%.3f\t", Layer[i].nd[k].output);
-        printf("-> (out)\n");
+        for(int k = 0 ; k < Layer[i].num ; k++)     printf("\t%f", Layer[i].nd[k].output);
+        printf("\t-> (out)\n");
     }
     puts("");
+}
+
+void weight_initialization(ld *Layer, float setting, int index) {
+    for(int i = 0 ; i < Layer[index].num ; i++)    
+        Layer[index].nd[i].weight = setting;
 }
 
 void layer_initialization(ld *Layer) {
     for(int i = 0 ; i < LAYERNUM ; i++) {
         Layer[i].nd = (nd*)calloc(sizeof(nd), Layer[i].num);
-        Layer[0].nd[i].output = 1;
     }
     weight_initialization(Layer, 1, 0);
 }
@@ -66,12 +52,8 @@ void node_set1(ld *layer) {
     layer[1].nd[3].weight = -0.31;
     layer[1].nd[4].weight =  0.29;
     layer[1].nd[5].weight = -0.45;
-
-    layer[2].nd[0].weight =  0.40;
-    layer[2].nd[1].weight =  0.84;    
-    //layer[1].nd[0].output += layer[1].nd[0].weight * layer[0].nd[0].output;
-    //layer[1].nd[0].output += layer[1].nd[0].weight * layer[0].nd[1].output;
-    //layer[1].nd[0].output += layer[1].nd[0].weight * layer[0].nd[2].output;
+    layer[2].nd[0].weight = -0.40;
+    layer[2].nd[1].weight =  0.84;
 }
 
 int main() {
@@ -81,11 +63,15 @@ int main() {
     layer[2].num = 2;
 
     layer_initialization(layer);
-    //weight_lprint(layer);
-//  Layer Batch
-    
     node_set1(layer);
-    node_output(layer);
+    
+    layer[0].nd[0].output = data[10];
+    layer[0].nd[1].output = data[11];
+    layer[0].nd[2].output = data[12];
+    node_output(layer);     // trigger
     weight_lprint(layer);
     layer_free(layer);
+
+    //weight_lprint(layer);
+    //layer_free(layer);
 }
