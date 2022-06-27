@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "StrcutMLP.h"
+#include "StructMLP.h"
 
 void weight_lprint(ld *Layer) {
     for(int i = 0 ; i < LAYERNUM ; i++) {
