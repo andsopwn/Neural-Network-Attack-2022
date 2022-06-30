@@ -46,7 +46,7 @@ void node_output(ld *layer) {
 
 void node_set1(ld *layer) {
     // weight setting 1
-    layer[1].nd[0].weight = -0.85;
+    layer[1].nd[0].weight = -1.03;
     layer[1].nd[1].weight =  0.62;
     layer[1].nd[2].weight = -0.51;
     layer[1].nd[3].weight = -0.31;
