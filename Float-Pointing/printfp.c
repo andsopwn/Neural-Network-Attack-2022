@@ -31,10 +31,27 @@ void test3() {
 }
 
 void thismust() {
-    for(int i = 0 ; i < 128 ; i++) 
-        printf("    result = weight[4] * input[%d];\n", i);
+    //for(int i = 0 ; i < 128 ; i++) printf("    result = weight[0x77] * input[%d];\n", i); puts("");
+    //for(int i = 0 ; i < 128 ; i++) printf("    result = weight[0x78] * input[%d];\n", i); puts("");
+    //for(int i = 0 ; i < 128 ; i++) printf("    result = weight[0x79] * input[%d];\n", i); puts("");
+    //for(int i = 0 ; i < 128 ; i++) printf("    result = weight[0x7a] * input[%d];\n", i); puts("");
+    //for(int i = 0 ; i < 128 ; i++) printf("    result = weight[0x7b] * input[%d];\n", i); puts("");
+    //for(int i = 0 ; i < 128 ; i++) printf("    result = weight[0x7c] * input[%d];\n", i); puts("");
+    //for(int i = 0 ; i < 128 ; i++) printf("    result = weight[0x7d] * input[%d];\n", i); puts("");
+    //for(int i = 0 ; i < 128 ; i++) printf("    result = weight[0x7e] * input[%d];\n", i); puts("");
+    for(int i = 0 ; i < 128 ; i++) printf("    result = weight[0x7f] * input[%d];\n", i); puts("");
+}
+
+void dataprint() {
+    for(int i = 0 ; i < 128 ; i++) {
+        printf("    {   // weight = 1.0x%x (%d/128)\n", i, i);
+        printf("        \n");
+        printf("    },\n");
+    }
+    puts("");
 }
 
 int main() {
     thismust();
+    //dataprint();
 }
