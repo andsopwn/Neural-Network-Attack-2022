@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "8bit.h"
+#include "data.h"
 #define num 130
 
 void fixedinput() {
@@ -39,6 +39,6 @@ void whatdiff() {
     }
 }
 int main() {
-    flexinput();
-    //whatdiff();
+    //flexinput();
+    whatdiff();
 }
