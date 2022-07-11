@@ -25,6 +25,7 @@
 #include "StructMLP.h"
 
 static int count = 0;
+ld      layer[3];
 
 void weight_initialization(ld *Layer, float setting, int index) {
     for(int i = 0 ; i < Layer[index].num ; i++)    
@@ -33,7 +34,7 @@ void weight_initialization(ld *Layer, float setting, int index) {
 
 void layer_initialization(ld *Layer) {
     for(int i = 0 ; i < LAYERNUM ; i++) {
-        layer[i].nd = (nd*)calloc(sizeof(nd), layer[i].num);
+        Layer[i].nd = (nd*)calloc(sizeof(nd), Layer[i].num);
     }
     weight_initialization(Layer, 1, 0);
 }
@@ -76,10 +77,6 @@ uint8_t get_key(uint8_t* k, uint8_t len)
 
 uint8_t get_pt(uint8_t* pt, uint8_t len)
 {
-    
-    layer_initialization(layer);
-    node_set1(layer);
-    
     layer[0].nd[0].output = pt[count];
     layer[0].nd[1].output = pt[count+1];
     layer[0].nd[2].output = pt[count+2];
@@ -102,7 +99,7 @@ uint8_t get_pt(uint8_t* pt, uint8_t len)
     layer_free(layer);
 	/* End user-specific code here. *
 	********************************/
-	simpleserial_put('r', 3, pt);
+	simpleserial_put('r', 16, pt);
 	return 0x00;
 }
 
@@ -114,10 +111,12 @@ uint8_t reset(uint8_t* x, uint8_t len)
 
 int main(void)
 {
-    ld      layer[3];
     layer[0].num = 3;
     layer[1].num = 6;
     layer[2].num = 2;
+    
+    layer_initialization(layer);
+    node_set1(layer);
     
     platform_init();
 	init_uart();
