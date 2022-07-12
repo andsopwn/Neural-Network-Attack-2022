@@ -69,14 +69,17 @@ void header(FILE *RFP) {
         for(int j = 0 ; j < 127 ; j++) cd[j] = data[j+1] - data[j];
         cd[127] = cd[126];
         
-        for(int j = 0 ; j < 128 ; j++)
-            fprintf(WFP, "%d, ", cd[j]);
-        fprintf(WFP, "%s", "\n\t}, ");
+        for(int j = 0 ; j < 128 ; j++) {
+            if(j == 127) fprintf(WFP, "%d", cd[j]);
+            else fprintf(WFP, "%d, ", cd[j]);
+        }
+        if(i == 127) fprintf(WFP, "%s", "\n\t}");
+        else fprintf(WFP, "%s", "\n\t}, ");
         fgets(buf, sizeof(buf), RFP);
 
     }
 
-    fprintf(WFP, "%s", "\n}");
+    fprintf(WFP, "%s", "\n};");
 
     fclose(WFP);
 }
