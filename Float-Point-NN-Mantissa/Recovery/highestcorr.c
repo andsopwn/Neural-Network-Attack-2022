@@ -3,8 +3,7 @@
 #include <math.h>
 #include "highestcorr.h"
 
-double corr(float *x, int *y, int size)
-{
+double corr(float *x, int *y, int size) {
     double      Sy      = 0;
     double      Syy     = 0;
     double      Sx      = 0;
@@ -45,7 +44,7 @@ void highest() {
     int     i, j, k;
 
     // File Stream
-    FN = fopen("FNN162_625.bin", "rb");
+    FN = fopen("trace.bin", "rb");
     if(FN == NULL)     puts("TRC OPEN ERR");
 
     data = (float**)calloc(sizeof(float*), trNum);
@@ -91,7 +90,7 @@ void highest() {
         }
         //printf("C[%f] Loc[%d-%d] WT[%f]\n", local_maxcorr, local_maxloc, local_maxloc + 128, (float)local_maxwt / 128 + 1);
     }
-    printf("C[%f] Loc[%d-%d] WT[%f]\n", global_maxcorr, global_maxloc, global_maxloc + 128, (float)global_maxwt / 128 + 1);
+    printf("C[%f] Loc[%d-%d] WT[%f](%d)\tlocal(%d)%f\n", global_maxcorr, global_maxloc, global_maxloc + 128, (float)global_maxwt / 128 + 1, global_maxwt, local_maxwt, local_maxcorr);
 
     for(i = 0 ; i < trNum ; i++)   free(data[i]);
     free(data);
@@ -101,6 +100,5 @@ void highest() {
 
 int main() {
     highest();
-
     
 }
