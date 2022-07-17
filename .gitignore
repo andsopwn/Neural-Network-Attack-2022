@@ -50,3 +50,5 @@ tempCodeRunnerFile.c
 # Trace
 *.npy
 *.bin
+
+!f.bin

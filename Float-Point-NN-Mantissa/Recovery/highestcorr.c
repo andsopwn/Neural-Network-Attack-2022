@@ -12,11 +12,11 @@ double corr(float *x, int *y, int size) {
 
     // var(X) = E(X^2) - E(X)^2
     for(int i = 0 ; i < size ; i++) {
-        Sxy += x[i] * y[i];
+        Sxy += x[i] * (float)y[i];
         Sx  += x[i];
-        Sy  += y[i];
+        Sy  += (float)y[i];
         Sxx += x[i] * x[i];
-        Syy += y[i] * y[i];
+        Syy += (float)y[i] * (float)y[i];
     }
     return ((double)size*Sxy - Sx * Sy) / sqrt(((double)size * Sxx - Sx * Sx)*((double)size * Syy - Sy* Sy));
 }
@@ -44,7 +44,7 @@ void highest() {
     int     i, j, k;
 
     // File Stream
-    FN = fopen("trace.bin", "rb");
+    FN = fopen("f.bin", "rb");
     if(FN == NULL)     puts("TRC OPEN ERR");
 
     data = (float**)calloc(sizeof(float*), trNum);
@@ -74,7 +74,7 @@ void highest() {
         local_maxwt   = 0;
         for(j = 0 ; j < 128 ; j++) {
             
-            local_curcorr = fabs(corr(cut[i], timing[j], windowsize));
+            local_curcorr = fabs(corr(cut[i], (int *)timing[j], windowsize));
             
             if(local_curcorr > local_maxcorr) {
                 local_maxcorr  = local_curcorr;
