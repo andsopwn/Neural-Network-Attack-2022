@@ -33,6 +33,7 @@ void highest() {
 
     float   curcorr;
     int     i, j, k;
+    int     range;
     char    buf[256];
 
     // File Stream
@@ -50,36 +51,41 @@ void highest() {
     /* 실험 실패 이유
          cut data 는 128 단위이므로 3차 배열 또는 2차 배열을 여러번 바꿔주면서 실험해야함 하지만 지금은 그렇지 않기에 결과값이 나오지 않음 
         코드 뜯어 고쳐라
+
+        1. 23871 23999 고쳐라
+        2. 23756 23884 흠..
     */
     
     cr  local, global;
 
-    init(&global, 0);
+    global.maxcorr = 0;
+    curcorr = 0;
     for(i = 0 ; i < 0x7f ; i++) {
-        init(&local, 0);    
-        for(j = 0 ; j < (trLen - windowsize) / stepsize ; j++) {
-        init(&local, 0);    
+        local.maxcorr = 0;
+        for(j = 0, range = 0 ; range < trLen - 129 ; j++, range += 1) {
+
             for(k = 0 ; k < 128 ; k++) {
-                cutX[k] = data[1][k + j * stepsize];
+                cutX[k] = data[0][k + range];
                 cutY[k] = timing[i][k];
             }
+
             curcorr = correlation(cutX, (float *)cutY);
-            if(curcorr >= 1.0 || curcorr <= -1.0)  { puts("FAULT!"); return; }
+            if(curcorr >= 1.0 || curcorr <= -1.0 || global.maxloc > 16000)  { puts("FAULT!"); return; }
             
             if(curcorr > local.maxcorr) {
                 local.maxcorr = curcorr;
                 local.maxwt   = i;
                 local.maxloc  = j;
             }
+
         }
         if(local.maxcorr > global.maxcorr) {
             global.maxcorr = local.maxcorr;
             global.maxloc  = local.maxloc;
             global.maxwt   = local.maxwt;
         }
-        //printf("%lf\n", curcorr);
-
     }
+        //printf("%lf\n", curcorr);
     printf("C[%f] Loc[%d-%d] WT[%f](%d)\n", global.maxcorr, global.maxloc, global.maxloc + 128, (float)global.maxwt / 128 + 1, global.maxwt);
     for(i = 0 ; i < trNum ; i++)   free(data[i]);
     free(data);
