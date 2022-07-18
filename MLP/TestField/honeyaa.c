@@ -9,7 +9,7 @@
 #include <string.h>
 
 #define INPUT 1		// 입력층 노드 개수 
-#define HIDDEN 5	// 첫번째 은닉층 노드 개수 
+#define HIDDEN 1	// 첫번째 은닉층 노드 개수 
 #define OUTPUT 1	// 출력층 노드 개수 
 
 // 입,출력 데이터 
@@ -45,7 +45,7 @@ int main()
 	// Weight 설정 
 	for (i = 0; i < INPUT; i++) {
 		for (j = 0; j < HIDDEN; j++)
-			WX[i][j] = 1.8;
+			WX[i][j] = 1.7;
 	}
 
 	for (i = 0; i < HIDDEN; i++) {
@@ -71,6 +71,8 @@ int main()
 		AFR[i] = tanh2(WSX[i]);
 	}
 
+	printf("\n%lf\n", WSX[0]);
+
 	// 출력
 #if 1
 	printf("<< Active Function 1(AFR) >> \n");
@@ -90,10 +92,9 @@ int main()
 		//Y[i] = exp(WSH[i]); 
         Y[i] = WSH[i]; 
 		sum += Y[i];
-	}
+	} 
 	for (i = 0; i < OUTPUT; i++)
 		Y[i] /= sum; 
-
 
 	printf("\n\ntest : %f\n\n", tanh2(1.8));
 	// 출력 
