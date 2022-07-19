@@ -43,7 +43,6 @@ void matlab(FILE *RFP) {
     fclose(WFP);
 
 }
-
 void header(FILE *RFP) {
     FILE    *WFP;
     char    *p;
@@ -86,15 +85,9 @@ void header(FILE *RFP) {
 
 int main() {
     FILE    *RFP;
-    char    *p;
-    char    buf[1024];
-    
-
-    RFP = fopen("data.dat", "rt");
-    if(RFP == NULL)     puts("FILE OPEN ERR");
-
-    //matlab(RFP);
+    if((RFP =fopen("data.dat", "rt")) == NULL)     puts("FILE OPEN ERR");
+    matlab(RFP);
     header(RFP);
-
+    
     fclose(RFP);
 }

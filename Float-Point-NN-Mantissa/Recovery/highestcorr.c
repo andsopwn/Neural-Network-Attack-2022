@@ -3,92 +3,100 @@
 #include <math.h>
 #include "highestcorr.h"
 
-double correlation(const float *x, const float *y) {
-    int         size    = 128;
-    double      Sy      = 0;
-    double      Syy     = 0;
-    double      Sx      = 0;
-    double      Sxx     = 0;
-    double      Sxy     = 0;
-
-    // var(X) = E(X^2) - E(X)^2
-    for(int i = 0 ; i < size ; i++) {
-        Sxy += x[i] * (float)y[i];
-        Sx  += x[i];
-        Sy  += (float)y[i];
-        Sxx += x[i] * x[i];
-        Syy += (float)y[i] * (float)y[i];
-    }
-    return ((double)size*Sxy - Sx * Sy) / sqrt(((double)size * Sxx - Sx * Sx)*((double)size * Syy - Sy* Sy));
-}
+// a.bin - 주헌, f.bin - 서준
+#if 0
+    #define     trace    "a.bin"   
+#else   
+    #define     trace    "f.bin"
+#endif
 
 void highest() {
     FILE    *FN, *WF;
+    cr      local, global;
+    cr      *candi;
+    int     rank[128];
+    int     ranc[128];
     float   **data;
     float   cutX[128], cutY[128];
-    int     trNum       = 5;
+    int     trNum       = 3;
     int     trLen       = 24000;
     int     windowsize  = 128;
     int     stepsize    = 1;
+    int     repeat      = (trLen - windowsize) / stepsize;
 
     float   curcorr;
-    int     i, j, k;
-    int     range;
-    char    buf[256];
+    long double corrsum;
+    int     wt, pos, k;
+    //char    buf[256];
 
     // File Stream
-    FN = fopen("f.bin", "rb");
+    FN = fopen(trace, "rb");
     if(FN == NULL)     puts("TRC OPEN ERR");
-
     data = (float**)calloc(sizeof(float*), trNum);
-    for(i = 0 ; i < trNum ; i++)   
+    for(int i = 0 ; i < trNum ; i++)   
         data[i] = (float*)calloc(sizeof(float), trLen);
 
-    for(i = 0 ; i < trNum ; i++)
+    for(int i = 0 ; i < trNum ; i++)
         fread(data[i], sizeof(float), trLen, FN);
     fclose(FN);
 
-    /* 실험 실패 이유
-         cut data 는 128 단위이므로 3차 배열 또는 2차 배열을 여러번 바꿔주면서 실험해야함 하지만 지금은 그렇지 않기에 결과값이 나오지 않음 
-        코드 뜯어 고쳐라
+    candi = (cr*)calloc(sizeof(cr), 128);
 
-        1. 23871 23999 고쳐라
-        2. 23756 23884 흠..
-    */
+#if     debug == 0      // info
+    puts("Setting Weight\t[1.2 1.6 | 1.0]\nSetting Input\t[1.4]\n");
+    printf("repeat [%d] windowsize[%d] stepsize[%d]\n", repeat, windowsize, stepsize);
+    printf("data[%lf]\n", data[1][23999]);
+
+#elif   debug == 1      // trace correlation
     
-    cr  local, global;
+    for(int i = 0 ; i < 128 ; i++)  init(&candi[i], 0);
+    init(&global, 0);
+    for(wt = 0 ; wt < 128 ; wt++) {
+        init(&local, 0);
+        // timing table model
+        for(pos = 0 ; pos < 128 ; pos++)      cutY[pos] = ((float)timing[wt][pos]) / 100;
+        for(pos = startpt ; pos < endpt ; pos++) {            
+            for(k = 0 ; k < 128 ; k++)  cutX[k] = data[1][k + pos * stepsize];
 
-    global.maxcorr = 0;
-    curcorr = 0;
-    for(i = 0 ; i < 0x7f ; i++) {
-        local.maxcorr = 0;
-        for(j = 0, range = 0 ; range < trLen - 129 ; j++, range += 1) {
+            curcorr = fabs(correlation(cutX, cutY));
 
-            for(k = 0 ; k < 128 ; k++) {
-                cutX[k] = data[0][k + range];
-                cutY[k] = timing[i][k];
-            }
-
-            curcorr = correlation(cutX, (float *)cutY);
-            if(curcorr >= 1.0 || curcorr <= -1.0 || global.maxloc > 16000)  { puts("FAULT!"); return; }
-            
+            if(curcorr >= 1.0 || curcorr <= -1.0) { puts("Invalid Corr!!"); return; }
             if(curcorr > local.maxcorr) {
                 local.maxcorr = curcorr;
-                local.maxwt   = i;
-                local.maxloc  = j;
+                local.maxwt   = wt;
+                local.maxloc  = pos;
             }
+        }
+        candi[wt] = local;
+        if(local.maxcorr > global.maxcorr) 
+            global = local;
 
-        }
-        if(local.maxcorr > global.maxcorr) {
-            global.maxcorr = local.maxcorr;
-            global.maxloc  = local.maxloc;
-            global.maxwt   = local.maxwt;
-        }
     }
         //printf("%lf\n", curcorr);
-    printf("C[%f] Loc[%d-%d] WT[%f](%d)\n", global.maxcorr, global.maxloc, global.maxloc + 128, (float)global.maxwt / 128 + 1, global.maxwt);
-    for(i = 0 ; i < trNum ; i++)   free(data[i]);
+    printf("MAX | C[%f]\tLoc[%d-%d]\tWT[%f](%d)\n", global.maxcorr, global.maxloc, global.maxloc + 128, (float)global.maxwt / 128 + 1, global.maxwt);
+ 
+
+    for(int i = 0 ; i < 128 ; i++) {
+        rank[i] = 1;
+        for(int j = 0 ; j < 128 ; j++) {
+            if(candi[i].maxcorr < candi[j].maxcorr) 
+                rank[i]++;
+        }
+    }
+
+    for(int i = 0 ; i < 128 ; i++)
+        ranc[rank[i] - 1] = i;
+    
+    for(int i = 0 ; i < 10 ; i++) {
+        printf("%d\tC[%f]\tLoc[%d-%d]\tWT[%f](%d)\n", i+1, candi[ranc[i]].maxcorr, candi[ranc[i]].maxloc, candi[ranc[i]].maxloc + 128, (float)candi[ranc[i]].maxwt / 128 + 1, candi[ranc[i]].maxwt);
+    }
+
+    printf("\n\t%d\t~\t%d\n", startpt, endpt);
+
+#endif
+    for(wt = 0 ; wt < trNum ; wt++)   free(data[wt]);
     free(data);
+    free(candi);
 }
 
 int main() {

@@ -45,29 +45,30 @@ void node_output(ld *layer) {
 }
 
 void node_set1(ld *layer) {
+    // input setting
+    layer[0].nd[0].output = 1+(float)65/128;
+    layer[0].nd[1].output = 1+(float)15/128;
+    layer[0].nd[2].output = 1+(float)80/128;
+
     // weight setting 1
-    layer[1].nd[0].weight = -1.03;
-    layer[1].nd[1].weight =  0.62;
-    layer[1].nd[2].weight = -0.51;
-    layer[1].nd[3].weight = -0.31;
-    layer[1].nd[4].weight =  0.29;
-    layer[1].nd[5].weight = -0.45;
-    layer[2].nd[0].weight = -0.40;
-    layer[2].nd[1].weight =  0.84;
+    layer[1].nd[0].weight = 1+(float)50/128;
+    layer[1].nd[1].weight = (float)10/128;
+    layer[1].nd[2].weight = (float)80/128;
+    layer[1].nd[3].weight = 1+(float)0/128;
+    layer[1].nd[4].weight = 1+(float)70/128;
+    layer[2].nd[0].weight = 1+(float)30/128;
+    layer[2].nd[1].weight = 1+(float)10/128;
 }
 
 int main() {
     ld      layer[3];
     layer[0].num = 3;
-    layer[1].num = 6;
+    layer[1].num = 5;
     layer[2].num = 2;
 
     layer_initialization(layer);
     node_set1(layer);
-    
-    layer[0].nd[0].output = data[10];
-    layer[0].nd[1].output = data[11];
-    layer[0].nd[2].output = data[12];
+
     node_output(layer);     // trigger
     weight_lprint(layer);
     layer_free(layer);
