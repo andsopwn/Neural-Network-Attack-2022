@@ -54,7 +54,7 @@ void highest() {
     for(wt = 0 ; wt < 128 ; wt++) {
         init(&local, 0);
         // timing table model
-        for(pos = 0 ; pos < 128 ; pos++)      cutY[pos] = ((float)timing[wt][pos]) / 100;
+        for(int i = 0 ; i < 128 ; i++)      cutY[i] = ((float)timing[wt][i]) / 100;
         for(pos = startpt ; pos < endpt ; pos++) {            
             for(k = 0 ; k < 128 ; k++)  cutX[k] = data[1][k + pos * stepsize];
 
@@ -74,7 +74,7 @@ void highest() {
     }
         //printf("%lf\n", curcorr);
     printf("MAX | C[%f]\tLoc[%d-%d]\tWT[%f](%d)\n", global.maxcorr, global.maxloc, global.maxloc + 128, (float)global.maxwt / 128 + 1, global.maxwt);
- 
+
 
     for(int i = 0 ; i < 128 ; i++) {
         rank[i] = 1;
