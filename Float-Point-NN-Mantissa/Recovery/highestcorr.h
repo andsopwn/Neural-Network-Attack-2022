@@ -5,6 +5,10 @@
 #define debug 1
 #define startpt 10000
 #define endpt   15000
+#define FNinp "corr/inp.bin"
+#define FNmul "corr/mul.bin"
+#define FNmov "corr/mov.bin"
+#define FNexp "corr/exp.bin"
 
 #include "../MantissaTimingTable/data.h"
 #include "float32.h"
