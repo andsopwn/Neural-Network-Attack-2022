@@ -44,4 +44,12 @@ double correlation(const float *x, const float *y, int size) {
     }
     return ((double)size*Sxy - Sx * Sy) / sqrt(((double)size * Sxx - Sx * Sx)*((double)size * Syy - Sy* Sy));
 }
+
+unsigned int   int32LE(unsigned char val[4]) {
+    return val[0] | (val[1] << 8) | (val[2] << 16) | (val[3] << 24);
+}
+
+cr  inMUL(int bitloc, int windowsize);
+cr  inCPA(int bitloc);
+
 #endif

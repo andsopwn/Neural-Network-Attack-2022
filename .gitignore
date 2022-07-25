@@ -50,5 +50,6 @@ tempCodeRunnerFile.c
 # Trace
 *.npy
 *.bin
+*.ali
 
 !f.bin

@@ -5,15 +5,24 @@
 #define FN  "data5000.bin"
 #define YN  "this.npy"
 
-unsigned int   int32LE(unsigned char val[4]) {
-    return val[0] | (val[1] << 8) | (val[2] << 16) | (val[3] << 24);
+int main() {
+    puts("\t:: MMTB Experiment ::\t");
+    cr    in[3];
+
+    for(int i = 0 ; i < 3 ; i++) {
+        //in[i] = inMUL(i, 100);
+        in[i] = inCPA(i);
+        //if(in[i].maxcorr < 0.8) { printf("MAIN :: CORR PEAK (-> %d) IS NOT UPPER THAN 0.8 (%.2f%%)\n", i, in[i].maxcorr * 100); }
+        printf("INPUT LOCATION(%d)\t[%d] (%.2f%%)\n", i, in[i].maxloc, in[i].maxcorr * 100);
+    }
 }
+
 cr  inMUL(int bitloc, int windowsize) {
     cr      local, global;
     if(bitloc < 0 || bitloc > 3) { global.maxcorr = 0; global.maxloc = 0; global.maxwt = 0; return global; }
 
     FILE    *RFP, *YFP, *WFP;
-    float  *corr;
+    float   *corr;
     float   *cutX, *cutY;
     float   **data;
     float   *inY;
@@ -118,9 +127,7 @@ cr  inCPA(int bitloc) {
     for(int i = 0 ; i < trNum ; i++) {
         for(int j = 0 ; j < bitloc + 1 ; j++)
             fread(&in8, 1, sizeof(unsigned int), YFP);
-        in32 = int32LE(in8);    
-        for(int k = 0 ; k < 32 ; k++)   
-            cutY[i] += (in32 >> k) & 0b1;
+        in32 = int32LE(in8); for(int k = 0 ; k < 32 ; k++)   cutY[i] += (in32 >> k) & 0b1;
         for(int j = 0 ; j < 3 - bitloc ; j++)
             fread(&in8, 1, sizeof(unsigned int), YFP);
     }
@@ -154,15 +161,4 @@ cr  inCPA(int bitloc) {
     free(inY);
 
     return local;
-}
-
-int main() {
-    puts("\t:: MMTB Experiment ::\t");
-    cr    in[3];
-
-    for(int i = 0 ; i < 1 ; i++) {
-        in[i] = inMUL(i, 100);
-        //if(in[i].maxcorr < 0.8) { printf("MAIN :: CORR PEAK (-> %d) IS NOT UPPER THAN 0.8 (%.2f%%)\n", i, in[i].maxcorr * 100); }
-        printf("INPUT LOCATION(%d)\t[%d] (%.2f%%)\n", i, in[i].maxloc, in[i].maxcorr * 100);
-    }
 }
