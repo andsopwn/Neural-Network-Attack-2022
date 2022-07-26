@@ -3,14 +3,12 @@
 #ifndef _HEADER_HC_
 #define _HEADER_HC_
 #define debug 1
-#define startpt 10000
-#define endpt   15000
 #define FNinp "corr/inp.bin"
 #define FNmul "corr/mul.bin"
 #define FNmov "corr/mov.bin"
 #define FNexp "corr/exp.bin"
 
-#include "../MantissaTimingTable/data.h"
+#include "../MantissaTimingTable/AVR/data.h"
 #include "float32.h"
 #include "input32.h"
 
@@ -49,7 +47,5 @@ unsigned int   int32LE(unsigned char val[4]) {
     return val[0] | (val[1] << 8) | (val[2] << 16) | (val[3] << 24);
 }
 
-cr  inMUL(int bitloc, int windowsize);
 cr  inCPA(int bitloc);
-
 #endif

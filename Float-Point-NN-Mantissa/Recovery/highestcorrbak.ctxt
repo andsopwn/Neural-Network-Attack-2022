@@ -20,7 +20,7 @@ void highest() {
     float   **data;
     float   **time;
     float   cutX[128], cutY[128];
-    int     trNum       = 5000;
+    int     trNum       = 3;
     int     trLen       = 24000;
     int     windowsize  = 200;
     int     stepsize    = 100;
@@ -41,16 +41,6 @@ void highest() {
         fread(data[i], sizeof(float), trLen, FN);
     fclose(FN);
 
-    if((WF = fopen(multi, "rb")) == NULL)     puts("mul OPEN ERR");
-    time = (float**)calloc(sizeof(float*), 128);
-    for(int i = 0 ; i < 128 ; i++)   
-        time[i] = (float*)calloc(sizeof(float), trLen);
-    
-    for(int i = 0 ; i < 128 ; i++)
-        fread(time[i], sizeof(float), trLen, WF);
-    fclose(WF);
-
-    
     
     candi = (cr*)calloc(sizeof(cr), 128);
 
@@ -104,10 +94,8 @@ void highest() {
     }
 
 #endif
-    for(int i = 0 ; i < trNum ; i++)   free(data[i]);
-    for(int i = 0 ; i <   128 ; i++)   free(time[i]);
+    for(wt = 0 ; wt < trNum ; wt++)   free(data[wt]);
     free(data);
-    free(time);
     free(candi);
 }
 
