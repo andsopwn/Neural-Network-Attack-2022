@@ -33,15 +33,16 @@ void test3() {
     printf("%.32f", f);
 }
 
-void test4() {
-    char    pt[16] = {0xF8, 0xD1, 0xD7, 0x32, 0x8E, 0x2F, 0xF9, 0x52, 0xD7, 0xBD, 0x62, 0xD3, 0xCE, 0xA6, 0x63, 0x36};
+float char_to_float() {
+    char    pt[16] = {0x82, 0x59, 0x0A, 0x0B, 0xE5, 0x29, 0xE9, 0x9A, 0x39, 0xAD, 0x52, 0x93, 0x45, 0x45, 0x08, 0xC2};
 
     float    f[3];
     unsigned int a[3];
     
-    //a[0] = pt[0] & 0xff | (pt[1] << 8) & 0xff00 | (pt[ 2] << 16) & 0xff0000 | (pt[ 3] << 24) & 0xff000000;
-    //a[1] = pt[4] & 0xff | (pt[5] << 8) & 0xff00 | (pt[ 6] << 16) & 0xff0000 | (pt[ 7] << 24) & 0xff000000;
-    //a[2] = pt[8] & 0xff | (pt[9] << 8) & 0xff00 | (pt[10] << 16) & 0xff0000 | (pt[11] << 24) & 0xff000000;
+
+    a[0] = pt[0] & 0xff | (pt[1] << 8) & 0x0000ff00 | (pt[ 2] << 16) & 0x00ff0000 | (pt[ 3] << 24) & 0xff000000;
+    a[1] = pt[4] & 0xff | (pt[5] << 8) & 0x0000ff00 | (pt[ 6] << 16) & 0x00ff0000 | (pt[ 7] << 24) & 0xff000000;
+    a[2] = pt[8] & 0xff | (pt[9] << 8) & 0x0000ff00 | (pt[10] << 16) & 0x00ff0000 | (pt[11] << 24) & 0xff000000;
     //a[0] = pt[0] | (pt[1] << 8) | (pt[ 2] << 16) | (pt[ 3] << 24);
     //a[1] = pt[4] | (pt[5] << 8) | (pt[ 6] << 16) | (pt[ 7] << 24);
     //a[2] = pt[8] | (pt[9] << 8) | (pt[10] << 16) | (pt[11] << 24);
@@ -53,12 +54,23 @@ void test4() {
     //layer[0].nd[0].output = 1+(float)65/128;
     //layer[0].nd[1].output = 1+(float)15/128;
     //layer[0].nd[2].output = 1+(float)80/128;a[0] = pt[0] | (pt[1] << 8) | (pt[ 2] << 16) | (pt[ 3] << 24);
-    a[1] = pt[4] | (pt[5] << 8) | (pt[ 6] << 16) | (pt[ 7] << 24);
-    a[2] = pt[8] | (pt[9] << 8) | (pt[10] << 16) | (pt[11] << 24);
+    //a[1] = pt[4] | (pt[5] << 8) | (pt[ 6] << 16) | (pt[ 7] << 24);
+    //a[2] = pt[8] | (pt[9] << 8) | (pt[10] << 16) | (pt[11] << 24);
     
-    printf("%.23f %.23f %.23f\n", f[0], f[1], f[2]);
+    printf("%.50f %.50f %.50f\n", f[0], f[1], f[2]);
+
+    return f[0];
+}
+
+unsigned int float_to_int32(float f) {
+    float a = 3.2f;
+
+    unsigned int b = (unsigned int)a;
+
+    printf("%08x\n", b);
 }
 
 int main() {
-    test4();
+    float k = char_to_float();
+    float_to_int32(k);
 }

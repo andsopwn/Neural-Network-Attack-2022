@@ -44,7 +44,7 @@ double correlation(const float *x, const float *y, int size) {
 }
 
 unsigned int   int32LE(unsigned char val[4]) {
-    return val[0] | (val[1] << 8) | (val[2] << 16) | (val[3] << 24);
+    return val[0] &0xff | (val[1] << 8) & 0x0000ff00 | (val[2] << 16) & 0x00ff0000 | (val[3] << 24) & 0xff000000;
 }
 
 cr  inCPA(int bitloc);

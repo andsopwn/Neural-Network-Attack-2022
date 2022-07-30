@@ -5,6 +5,8 @@
 #define FN  "dddd.bin"
 #define YN  "dddd.npy"
 
+float   rw[5] = { 1+(float)50/128, (float)10/128, (float)80/128, 1+(float)0/128, 1+(float)70/128 };
+
 cr  inCPA(int bitloc) {
     cr      local, global;
     if(bitloc < 0 || bitloc > 3) { global.maxcorr = 0; global.maxloc = 0; global.maxwt = 0; return global; }
@@ -158,14 +160,94 @@ cr  muCPA(int bitloc) {
     return local;
 }
 
+cr  teCPA() {
+    cr      local, global;
+
+    FILE    *RFP, *YFP, *WFP;
+    float   *corr;
+    float   *cutX, *cutY;
+    float   **data;
+    int     trNum       = 5000;
+    int     trLen       = 24000;
+    int     wt, loc;
+    unsigned char in8[4];
+    unsigned int  in32;
+    float         f[3];
+
+    
+    
+    if((RFP = fopen(FN, "rt")) == NULL) puts("MAIN :: TRACE FILE IS NOT DETECTED");
+    if((YFP = fopen(YN, "rt")) == NULL) puts("MAIN :: MODEL FILE IS NOT DETECTED");
+
+    data = (float**)calloc(sizeof(float*), trNum);
+    for(int i = 0 ; i < trNum ; i++)
+        data[i] = (float*)calloc(sizeof(float), trLen);
+
+    for(int i = 0 ; i < trNum ; i++)
+        fread(data[i], sizeof(float), trLen, RFP);
+    fclose(RFP);
+    
+    cutX = (float*)calloc(sizeof(float), trNum);
+    cutY = (float*)calloc(sizeof(float), trNum);
+    corr = (float*)calloc(sizeof(float), trLen);
+
+    init(&local, 0);
+    for(int i = 0 ; i < trNum ; i++) {
+        for(int k = 0 ; k < 3 ; k++) {
+            fread(&in8, 1, sizeof(unsigned int), YFP);
+            in32 = int32LE(in8);
+            memcpy((unsigned char*)&f[k], (unsigned char*)&in32, 4);
+        }
+        f[0] *= rw[0];
+        
+        // float to int32 code need !!
+        
+        for(int k = 0 ; k < 32 ; k++)
+            cutY[i] += (in32 >> k) & 0b1;
+        fread(&in8, 1, sizeof(unsigned int), YFP);   // rid 
+        fread(&in8, 1, sizeof(unsigned int), YFP);   // rid 
+        fread(&in8, 1, sizeof(unsigned int), YFP);
+    }
+    fclose(YFP);
+
+    for(loc = 0 ; loc < trLen ; loc++) {
+        for(int i = 0 ; i < trNum ; i++)
+            cutX[i] = data[i][loc];
+
+        corr[loc] = correlation(cutX, cutY, trNum);
+        if(fabs(corr[loc]) > local.maxcorr) {
+            local.maxcorr = fabs(corr[loc]);
+            local.maxloc  = loc;
+            local.maxwt   = wt;
+        }
+    }
+    if(bitloc == 0)        WFP = fopen("corr.bin", "a+b");
+    else if(bitloc == 1)   WFP = fopen("corr.bin", "a+b");
+    else if(bitloc == 2)   WFP = fopen("corr.bin", "a+b");
+
+    fwrite(corr, sizeof(float), trLen, WFP);
+    fclose(WFP);
+    //printf("[%lf], [%d]\n", local.maxcorr, local.maxloc);
+
+    for(int i = 0 ; i < trNum ; i++)
+        free(data[i]);
+    free(data);
+    free(corr);
+    free(cutX);
+    free(cutY);
+ 
+    return local;
+}
 int main() {
     puts("\t:: MMTB Experiment ::\t");
-    cr    in[3];
+    cr    in[4];
 
     for(int i = 0 ; i < 3 ; i++) {
         //in[i] = inMUL(i, 100);
         in[i] = inCPA(i);
-        //if(in[i].maxcorr < 0.8) { printf("MAIN :: CORR PEAK (-> %d) IS NOT UPPER THAN 0.8 (%.2f%%)\n", i, in[i].maxcorr * 100); }
         printf("INPUT LOCATION(%d)\t[%d] (%.2f%%)\n", i, in[i].maxloc, in[i].maxcorr * 100);
     }
+
+    in[4] = teCPA();
+    printf("INPUT LOCATION(%d)\t[%d] (%.2f%%)\n", i, in[i].maxloc, in[i].maxcorr * 100);
 }

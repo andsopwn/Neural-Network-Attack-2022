@@ -49,9 +49,6 @@ void highest() {
     for(int i = 0 ; i < 128 ; i++)
         fread(time[i], sizeof(float), trLen, WF);
     fclose(WF);
-
-    
-    
     candi = (cr*)calloc(sizeof(cr), 128);
 
 #if     debug == 0      // info

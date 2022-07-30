@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#define     timingFN    "../../Trace/tttt.bin"
+#define     timingFN    "../../Trace/trace.bin"
 
 typedef struct FloatSave {
     float           val;
@@ -36,9 +36,9 @@ void lowest() {
     cnt = 0;
     for(int loc = 100 ; loc < 24000 ; loc++) {
         ff.loc = loc;
-        ff.abs = fabs(data[119][loc]);
+        ff.abs = fabs(data[0][loc]);
         if(cnt == 128)  break;
-        if(ff.abs > 0.18 && ff.abs < 0.25) {
+        if(ff.abs > 0.13 && ff.abs < 0.25) {
             diffloc[cnt] = loc + 1;
             cnt++;
         }
