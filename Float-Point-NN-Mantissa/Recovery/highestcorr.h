@@ -47,5 +47,16 @@ unsigned int   int32LE(unsigned char val[4]) {
     return val[0] &0xff | (val[1] << 8) & 0x0000ff00 | (val[2] << 16) & 0x00ff0000 | (val[3] << 24) & 0xff000000;
 }
 
+unsigned int float_to_int32(float f) {
+    union conv {
+        float f;
+        unsigned int a;
+    };
+    union conv ff;
+    ff.f = f;
+    //printf("%08x\n", ff.a);
+    return ff.a;
+}
+
 cr  inCPA(int bitloc);
 #endif

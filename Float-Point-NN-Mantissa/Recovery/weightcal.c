@@ -63,11 +63,14 @@ float char_to_float() {
 }
 
 unsigned int float_to_int32(float f) {
-    float a = 3.2f;
-
-    unsigned int b = (unsigned int)a;
-
-    printf("%08x\n", b);
+    union conv {
+        float f;
+        unsigned int a;
+    };
+    union conv ff;
+    ff.f = f;
+    //printf("%08x\n", ff.a);
+    return ff.a;
 }
 
 int main() {

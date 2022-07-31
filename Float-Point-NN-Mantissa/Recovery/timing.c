@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 #include "highestcorr.h"
 #define FN  "dddd.bin"
 #define YN  "dddd.npy"
@@ -173,8 +174,7 @@ cr  teCPA() {
     unsigned char in8[4];
     unsigned int  in32;
     float         f[3];
-
-    
+    float         fs;
     
     if((RFP = fopen(FN, "rt")) == NULL) puts("MAIN :: TRACE FILE IS NOT DETECTED");
     if((YFP = fopen(YN, "rt")) == NULL) puts("MAIN :: MODEL FILE IS NOT DETECTED");
@@ -192,20 +192,20 @@ cr  teCPA() {
     corr = (float*)calloc(sizeof(float), trLen);
 
     init(&local, 0);
+    fs = 0;
     for(int i = 0 ; i < trNum ; i++) {
         for(int k = 0 ; k < 3 ; k++) {
             fread(&in8, 1, sizeof(unsigned int), YFP);
             in32 = int32LE(in8);
             memcpy((unsigned char*)&f[k], (unsigned char*)&in32, 4);
+            if(k == 2)  memcpy((unsigned char*)&f[k], (unsigned char*)&in32, 4);
         }
-        f[0] *= rw[0];
-        
-        // float to int32 code need !!
-        
+        fs = (f[0] + f[1] + f[2]) * 2;
+        in32 = float_to_int32(fs);
+        printf("%u\n", in32);
+        return global;
         for(int k = 0 ; k < 32 ; k++)
             cutY[i] += (in32 >> k) & 0b1;
-        fread(&in8, 1, sizeof(unsigned int), YFP);   // rid 
-        fread(&in8, 1, sizeof(unsigned int), YFP);   // rid 
         fread(&in8, 1, sizeof(unsigned int), YFP);
     }
     fclose(YFP);
@@ -221,9 +221,7 @@ cr  teCPA() {
             local.maxwt   = wt;
         }
     }
-    if(bitloc == 0)        WFP = fopen("corr.bin", "a+b");
-    else if(bitloc == 1)   WFP = fopen("corr.bin", "a+b");
-    else if(bitloc == 2)   WFP = fopen("corr.bin", "a+b");
+    WFP = fopen("corr.bin", "w+b");
 
     fwrite(corr, sizeof(float), trLen, WFP);
     fclose(WFP);
@@ -238,16 +236,11 @@ cr  teCPA() {
  
     return local;
 }
+
 int main() {
     puts("\t:: MMTB Experiment ::\t");
     cr    in[4];
 
-    for(int i = 0 ; i < 3 ; i++) {
-        //in[i] = inMUL(i, 100);
-        in[i] = inCPA(i);
-        printf("INPUT LOCATION(%d)\t[%d] (%.2f%%)\n", i, in[i].maxloc, in[i].maxcorr * 100);
-    }
-
-    in[4] = teCPA();
-    printf("INPUT LOCATION(%d)\t[%d] (%.2f%%)\n", i, in[i].maxloc, in[i].maxcorr * 100);
+    //for(int i = 0 ; i < 3 ; i++) { in[i] = inCPA(i); printf("INPUT LOCATION(%d)\t[%d] (%.2f%%)\n", i, in[i].maxloc, in[i].maxcorr * 100); }
+    in[3] = teCPA(); printf("INPUT LOCATION(%d)\t[%d] (%.2f%%)\n", 0, in[3].maxloc, in[3].maxcorr * 100);
 }
