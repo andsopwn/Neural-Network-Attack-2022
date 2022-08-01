@@ -6,7 +6,7 @@
 
 #define ND  152
 
-float   rw[5] = { 1+(float)50/128, (float)10/128, (float)80/128, 1+(float)10/128, 1+(float)70/128 };
+float   rw[5] = { 1+(float)124/128, 1+(float)57/128, 1+(float)84/128, 1+(float)47/128, 1+(float)50/128 };
 
 cr  inCPA(int bitloc) {
     cr      local, global;
@@ -130,19 +130,25 @@ cr  teCPA() {
     init(&local, 0);
     fs = 0;
     for(int i = 0 ; i < trNum ; i++) {
+        fread(&in8, 1, sizeof(unsigned int), YFP);
+        in32 = int32LE(in8);
+        memcpy((unsigned char*)&f[0], (unsigned char*)&in32, 4);
 
-        for(int k = 0 ; k < 3 ; k++) {
-            fread(&in8, 1, sizeof(unsigned int), YFP);
-            in32 = int32LE(in8);
-            memcpy((unsigned char*)&f[k], (unsigned char*)&in32, 4);
-            if(k == 2)  memcpy((unsigned char*)&f[k], (unsigned char*)&in32, 4);
-        }
-        fs = (f[0] + f[1] + f[2]) * 2;
+        fread(&in8, 1, sizeof(unsigned int), YFP);
+        in32 = int32LE(in8);
+        memcpy((unsigned char*)&f[1], (unsigned char*)&in32, 4);
+
+        fread(&in8, 1, sizeof(unsigned int), YFP);
+        in32 = int32LE(in8);
+        memcpy((unsigned char*)&f[2], (unsigned char*)&in32, 4);
+
+        fs = rw[0] * f[0];
         in32 = float_to_int32(fs);
-        printf("%u\n", in32);
-        return global;
+        //printf("%u\n", in32);
+        //return global;
         for(int k = 0 ; k < 32 ; k++)
             cutY[i] += (in32 >> k) & 0b1;
+
         fread(&in8, 1, sizeof(unsigned int), YFP);
     }
     fclose(YFP);
@@ -158,7 +164,7 @@ cr  teCPA() {
             local.maxwt   = wt;
         }
     }
-    WFP = fopen(CN, "w+b");
+    if((WFP = fopen(CN, "a+b")) == NULL) WFP = fopen(CN, "w+b");
 
     fwrite(corr, sizeof(float), trLen, WFP);
     fclose(WFP);
@@ -179,5 +185,5 @@ int main() {
     cr    in[4];
 
     for(int i = 0 ; i < 1 ; i++) { in[i] = inCPA(i); printf("INPUT LOCATION(%d)\t[%d] (%.2f%%)\n", i, in[i].maxloc, in[i].maxcorr * 100); }
-    //in[3] = teCPA(); printf("INPUT LOCATION(%d)\t[%d] (%.2f%%)\n", 0, in[3].maxloc, in[3].maxcorr * 100);
+    for(int i = 0 ; i < 1 ; i++) { in[3] = teCPA(); printf("mul LOCATION(%d)\t[%d] (%.2f%%)\n", 0, in[3].maxloc, in[3].maxcorr * 100 ); }
 }

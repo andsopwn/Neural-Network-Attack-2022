@@ -21,7 +21,7 @@ void highest() {
     float   **data;
     float   **time;
     float   cutX[128], cutY[128];
-    int     trNum       = 5000;
+    int     trNum       =    5000;
     int     trLen       = 24000;
     int     windowsize  = 200;
     int     stepsize    = 100;
