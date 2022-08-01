@@ -52,10 +52,12 @@ void node_set1(ld *layer) {
 
     // weight setting 1
     layer[1].nd[0].weight = 1+(float)50/128;
-    layer[1].nd[1].weight = (float)10/128;
-    layer[1].nd[2].weight = (float)80/128;
-    layer[1].nd[3].weight = 1+(float)0/128;
+    layer[1].nd[1].weight =   (float)10/128;
+    layer[1].nd[2].weight =   (float)80/128;
+    layer[1].nd[3].weight = 1+(float)10/128;
     layer[1].nd[4].weight = 1+(float)70/128;
+    layer[1].nd[5].weight = 1+(float)50/128;
+    layer[1].nd[6].weight = 1+(float)10/128;
     layer[2].nd[0].weight = 1+(float)30/128;
     layer[2].nd[1].weight = 1+(float)10/128;
 }
@@ -63,7 +65,7 @@ void node_set1(ld *layer) {
 int main() {
     ld      layer[3];
     layer[0].num = 3;
-    layer[1].num = 5;
+    layer[1].num = 7;
     layer[2].num = 2;
 
     layer_initialization(layer);

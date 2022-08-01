@@ -7,10 +7,11 @@
 #if 0
     #define     trace    "a.bin"   
 #else   
-    #define     trace    "dddd.bin"
-    #define     multi    "../Trace/tttt.bin"
+    #define     trace    "../Trace/152.bin"
+    #define     input    "../Trace/152.npy"
+    #define     multi    "../Trace/tim.bin"
 #endif
-
+        // tttt.bin
 void highest() {
     FILE    *FN, *WF;
     cr      local, global;
@@ -20,7 +21,7 @@ void highest() {
     float   **data;
     float   **time;
     float   cutX[128], cutY[128];
-    int     trNum       = 3;
+    int     trNum       = 5000;
     int     trLen       = 24000;
     int     windowsize  = 200;
     int     stepsize    = 100;
@@ -41,7 +42,14 @@ void highest() {
         fread(data[i], sizeof(float), trLen, FN);
     fclose(FN);
 
+    if((WF = fopen(multi, "rb")) == NULL)     puts("mul OPEN ERR");
+    time = (float**)calloc(sizeof(float*), 128);
+    for(int i = 0 ; i < 128 ; i++)   
+        time[i] = (float*)calloc(sizeof(float), trLen);
     
+    for(int i = 0 ; i < 128 ; i++)
+        fread(time[i], sizeof(float), trLen, WF);
+    fclose(WF);
     candi = (cr*)calloc(sizeof(cr), 128);
 
 #if     debug == 0      // info
@@ -94,8 +102,10 @@ void highest() {
     }
 
 #endif
-    for(wt = 0 ; wt < trNum ; wt++)   free(data[wt]);
+    for(int i = 0 ; i < trNum ; i++)   free(data[i]);
+    for(int i = 0 ; i <   128 ; i++)   free(time[i]);
     free(data);
+    free(time);
     free(candi);
 }
 

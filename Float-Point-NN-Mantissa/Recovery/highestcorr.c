@@ -7,8 +7,9 @@
 #if 0
     #define     trace    "a.bin"   
 #else   
-    #define     trace    "dddd.bin"
-    #define     multi    "../Trace/tttt.bin"
+    #define     trace    "../Trace/152.bin"
+    #define     input    "../Trace/152.npy"
+    #define     multi    "../Trace/tim.bin"
 #endif
 
 void highest() {

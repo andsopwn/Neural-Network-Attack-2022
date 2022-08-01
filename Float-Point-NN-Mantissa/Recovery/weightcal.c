@@ -75,5 +75,5 @@ unsigned int float_to_int32(float f) {
 
 int main() {
     float k = char_to_float();
-    float_to_int32(k);
+    printf("%x\n", float_to_int32(k));
 }

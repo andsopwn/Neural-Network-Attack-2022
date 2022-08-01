@@ -57,6 +57,4 @@ unsigned int float_to_int32(float f) {
     //printf("%08x\n", ff.a);
     return ff.a;
 }
-
-cr  inCPA(int bitloc);
 #endif
