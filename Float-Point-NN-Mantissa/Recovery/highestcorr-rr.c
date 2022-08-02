@@ -47,6 +47,7 @@ void highestCorr() {
     float   weight;
     float   maxcr;
     float   *corr;
+    float   *best;
     float   **tim;
     float   **mlp;
     float   *cutX;  // mlp trace
@@ -79,31 +80,31 @@ void highestCorr() {
     cutX = (float*)calloc(sizeof(float), cutsize);
     cutY = (float*)calloc(sizeof(float), cutsize);
     corr = (float*)calloc(sizeof(float), trLen);
+    best = (float*)calloc(sizeof(float), trLen);
 
     for(int i = 0 ; i < cutsize ; i++)
-        //cutX[i] = mlp[30][866 + i];
-        cutX[i] = mlp[11][138 + i];
-    puts("\n");
+        cutX[i] = mlp[11][140 + i]; // node 1
+        //cutX[i] = mlp[11][450 + i];  // node 2
+        //cutX[i] = mlp[11][800 + i];  // node 3
+        //cutX[i] = mlp[11][1200 + i]; // node 4
+        //cutX[i] = mlp[11][1550 + i]; // node 5
+
     init(&global, 0);
     for(int wt = 0 ; wt < 128 ; wt++) {
-        
         init(&local, 0);
-        for(int loc = 300 ; loc < 600 ; loc+=1) {  // 250 ~ 970
+        for(int loc = 300 ; loc < 900 ; loc+=1) {  // 250 ~ 970 // 360
 
             for(int ip = 0 ; ip < 128 ; ip++) {
                 for(int i = 0 ; i < cutsize ; i++)
                     cutY[i] = tim[wt * 128 + ip][i + loc];
 
                 corr[ip] = correlation(cutX, cutY, cutsize);
-                //printf("%lf\n", corr[ip]);
-                
+
                 if(fabs(corr[ip]) > local.maxcorr) {
                     local.maxcorr = fabs(corr[ip]);
-                    local.maxloc  = ip;
+                    local.maxloc  = loc;
                     local.maxwt   = wt;
                 }
-                //fflush(stdout);
-                //printf(" current \t Weight[%d|%d] corr[%lf|%lf] -> timing loc[%d] wt[%d]\r", global.maxwt, local.maxwt, global.maxcorr, local.maxcorr, loc, wt);
             }
             printf("Processing %.2f%%\t\r", (float)wt/128 * 100);
         }
@@ -120,7 +121,7 @@ void highestCorr() {
     }
     puts("");
 
-    printf("\n :: RECOVERED MANTISSA :: \nPEAK %lf\t%lf (%d)\n", global.maxcorr, 1+(float)global.maxwt/128, global.maxwt);
+    printf("\n :: RECOVERED MANTISSA :: \nPEAK %lf\t%lf (%d) loc %d\n", global.maxcorr, 1+(float)global.maxwt/128, global.maxwt, global.maxloc);
     printf("\n :: REAL Weight Mantissa ::\n");
     for(int i = 0 ; i < 5 ; i++) {
         printf("Node(%d) \t %lf (%d)\n", i, realweight[i], (int)((realweight[i]-1) * 128));
@@ -131,6 +132,7 @@ void highestCorr() {
     free(cutX);
     free(cutY);
     free(corr);
+    free(best);
 
     for(int i = 0 ; i < trNum ; i++)
         free(mlp[i]);
