@@ -4,7 +4,7 @@
 #include <string.h>
 #include "highestcorr.h"
 
-#define ND  152
+#define ND  3521
 
 float   rw[5] = { 1+(float)50/128, (float)10/128, (float)80/128, 1+(float)10/128, 1+(float)70/128 };
 
@@ -180,152 +180,11 @@ cr  teCPA() {
     return local;
 }
 
-cr  loCPA() {
-    cr      local, global;
-
-    FILE    *RFP, *YFP, *WFP;
-    float   *corr;
-    float   *cutX, *cutY;
-    float   **data;
-    float   **time;
-    int     trNum       = 5000;
-    int     trLen       = 24000;
-    int     wt, loc;
-    unsigned char in8[4];
-    unsigned int  in32;
-    float         f[3];
-    float         fs;
-
-    char    FN[100];
-    char    YN[100];
-    char    CN[100];
-
-    sprintf(FN, "../Trace/%d.bin", ND);     // trace
-    sprintf(YN, "../Trace/time.bin");   // timing trace
-    sprintf(CN, "../Trace/%d.tcr", ND);     // corr
-    
-
-    data = (float**)calloc(sizeof(float*), trNum);
-    for(int i = 0 ; i < trNum ; i++)
-        data[i] = (float*)calloc(sizeof(float), trLen);
-
-    if((RFP = fopen(FN, "rt")) == NULL) puts("MAIN :: TRACE FILE IS NOT DETECTED");
-    for(int i = 0 ; i < trNum ; i++)
-        fread(data[i], sizeof(float), trLen, RFP);
-    fclose(RFP);
-    
-    time = (float**)calloc(sizeof(float*), trNum);
-    for(int i = 0 ; i < trNum ; i++)
-        time[i] = (float*)calloc(sizeof(float), trLen);
-
-    if((YFP = fopen(YN, "rt")) == NULL) puts("MAIN :: TIME FILE IS NOT DETECTED");
-    for(int i = 0 ; i < trNum ; i++)
-        fread(time[i], sizeof(float), trLen, YFP);
-    fclose(YFP);
-
-    cutX = (float*)calloc(sizeof(float), 200);
-    cutY = (float*)calloc(sizeof(float), 200);
-    corr = (float*)calloc(sizeof(float), trLen);
-
-    for(int i = 0 ; i < 200 ; i++) {
-        cutX[i] = data[10][i + 2000];
-        cutY[i] = time[10][i + 5000];
-    }
-
-    printf("CORR [%lf]\n", correlation(cutX, cutY, 200));
-
-    for(int i = 0 ; i < trNum ; i++)
-        free(data[i]);
-    for(int i = 0 ; i < trNum ; i++)
-        free(time[i]);
-    free(data);
-    free(time);
-    free(corr);
-    free(cutX);
-    free(cutY);
- 
-    return local;
-}
-
-cr  tiCPA() {
-    cr      local, global;
-
-    FILE    *RFP, *YFP, *WFP;
-    float   *corr;
-    float   *cutX, *cutY;
-    float   **data;
-    float   **time;
-    int     trNum       = 5000;
-    int     trLen       = 24000;
-    int     wt, loc;
-    unsigned char in8[4];
-    unsigned int  in32;
-    float         f[3];
-    float         fs;
-
-    char    FN[100];
-    char    YN[100];
-    char    CN[100];
-
-    sprintf(FN, "../Trace/%d.bin", ND);     // trace
-    sprintf(YN, "../Trace/time.bin");   // timing trace
-    sprintf(CN, "../Trace/%d.tcr", ND);     // corr
-    
-
-    data = (float**)calloc(sizeof(float*), trNum);
-    for(int i = 0 ; i < trNum ; i++)
-        data[i] = (float*)calloc(sizeof(float), trLen);
-
-    if((RFP = fopen(FN, "rt")) == NULL) puts("MAIN :: TRACE FILE IS NOT DETECTED");
-    for(int i = 0 ; i < trNum ; i++)
-        fread(data[i], sizeof(float), trLen, RFP);
-    fclose(RFP);
-    
-    time = (float**)calloc(sizeof(float*), trNum);
-    for(int i = 0 ; i < trNum ; i++)
-        time[i] = (float*)calloc(sizeof(float), trLen);
-
-    if((YFP = fopen(YN, "rt")) == NULL) puts("MAIN :: TIME FILE IS NOT DETECTED");
-    for(int i = 0 ; i < trNum ; i++)
-        fread(time[i], sizeof(float), trLen, YFP);
-    fclose(YFP);
-
-    cutX = (float*)calloc(sizeof(float), 200);
-    cutY = (float*)calloc(sizeof(float), 200);
-    corr = (float*)calloc(sizeof(float), trLen);
-
-    for(int loc = 0 ; loc < 23800 ; loc++) {
-
-        for(int i = 0 ; i < 200 ; i++) {
-        cutX[i] = data[50][loc + i];
-        cutY[i] = time[50][3438 + i];
-        }
-
-        corr[loc] = correlation(cutX, cutY, 200);
-    }
-    WFP = fopen(CN, "w+b");
-    fwrite(corr, sizeof(float), trLen, WFP);
-    fclose(WFP);
-
-    for(int i = 0 ; i < trNum ; i++)
-        free(data[i]);
-    for(int i = 0 ; i < trNum ; i++)
-        free(time[i]);
-    free(data);
-    free(time);
-    free(corr);
-    free(cutX);
-    free(cutY);
- 
-    return local;
-}
-
-
 int main() {
     puts("\t:: MMTB Experiment ::\t");
     cr    in[5];
 
-    //for(int i = 0 ; i < 1 ; i++) { in[i] = inCPA(i); printf("INPUT LOCATION(%d)\t[%d] (%.2f%%)\n", i, in[i].maxloc, in[i].maxcorr * 100); }
+    for(int i = 0 ; i < 3 ; i++) { in[i] = inCPA(i); printf("INPUT LOCATION(%d)\t[%d] (%.2f%%)\n", i, in[i].maxloc, in[i].maxcorr * 100); }
     //for(int i = 0 ; i < 1 ; i++) { in[3] = teCPA(); printf("mul LOCATION(%d)\t[%d] (%.2f%%)\n", 0, in[3].maxloc, in[3].maxcorr * 100 ); }
-    in[4] = tiCPA();
+    //in[4] = tiCPA();
 }
