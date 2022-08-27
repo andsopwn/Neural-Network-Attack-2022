@@ -34,19 +34,19 @@ void weight_initialization(ld *Layer, float setting, int index) {
 }
 
 void layer_initialization(ld *Layer) {
-    for(int i = 0 ; i < LAYERNUM ; i++) {
+    for(int i = 0 ; i < LM ; i++) {
         Layer[i].nd = (nd*)calloc(sizeof(nd), Layer[i].num);
     }
     weight_initialization(Layer, 1, 0);
 }
 
 void layer_free(ld *Layer) {
-    for(int i = 0 ; i < LAYERNUM ; i++)    
+    for(int i = 0 ; i < LM ; i++)    
         free(Layer[i].nd);
 }
 
 void node_output(ld *layer) {
-    for(int i = 1 ; i < LAYERNUM ; i++) {
+    for(int i = 1 ; i < LM ; i++) {
         for(int j = 0 ; j < layer[i].num ; j++) {
             for(int k = 0 ; k < layer[i - 1].num ; k++)
                 layer[i].nd[j].output += layer[i].nd[j].weight * layer[i - 1].nd[k].output;

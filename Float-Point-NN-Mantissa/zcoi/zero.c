@@ -24,7 +24,7 @@ int rr(const float a) { // -5.4
     if(cal < 0) {
         if(cal >= -0.5) return (int)ret;
         else            return (int)ret - 1;
-    } else {
+    } else { 
         if(cal >= 0.5)  return (int)ret + 1;
         else            return (int)ret;
     }
@@ -73,7 +73,7 @@ void exploit(const float target, const int ipk, const int round) {
 }
 
 void zerocross() {
-    float   target = wt[0];
+    float   target = wt[4];
     int     val  = ipk1(target);
     if(val == -1 || val == 0)    puts("ZERO-CROSS. IP 1st Round Failed!");
     else {

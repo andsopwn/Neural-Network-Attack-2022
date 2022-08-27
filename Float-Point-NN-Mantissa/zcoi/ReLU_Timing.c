@@ -9,7 +9,7 @@ int main() {
 
     int     loc[200] = { 0, };
 
-    RFP = fopen("relu.bin", "rb");
+    RFP = fopen("mlpa.bin", "rb");
     data = (float**)calloc(sizeof(float*), trNum);
     for(int i = 0 ; i < trNum ; i++)
         data[i] = (float*)calloc(sizeof(float), trLen);
