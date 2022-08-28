@@ -51,5 +51,7 @@ tempCodeRunnerFile.c
 *.npy
 *.bin
 *.ali
+*.bak
+*.crr
 
 !f.bin

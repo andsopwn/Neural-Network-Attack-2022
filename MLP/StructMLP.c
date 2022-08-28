@@ -37,11 +37,10 @@ void node_output(ld *layer) {
         for(int j = 0 ; j < layer[i].num ; j++) {
             for(int k = 0 ; k < layer[i - 1].num ; k++)
                 layer[i].nd[j].output += layer[i].nd[j].weight * layer[i - 1].nd[k].output;
-        }
-        
-        for(int j = 0 ; j < layer[i].num ; j++)
-            layer[i].nd[j].output = relu(layer[i].nd[j].output);
-            
+        }    
+    }
+    for(int i = 0 ; i < layer[1].num ; i++) {
+        layer[1].nd[i].output = relu(layer[1].nd[i].output);
     }
 }
 
