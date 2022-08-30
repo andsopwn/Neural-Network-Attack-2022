@@ -49,7 +49,7 @@ int ipk2(const float wt) {
     float   ip;
     for(int i = 0 ; i < 256 ; i++) {
         pa = (wt * (float)i) + (255 * 0.25975) + bias;
-        //printf("ZERO-CROSS.IP 2nd[%d]\t PA[%f]\n", i, pa);
+        printf("ZERO-CROSS.IP 2nd[%d]\t PA[%f]\n", i, pa);
         if((pa <= 0)) { return  i; }
     }
     return -1;
@@ -73,7 +73,7 @@ void exploit(const float target, const int ipk, const int round) {
 }
 
 void zerocross() {
-    float   target = wt[4];
+    float   target = wt[2];
     int     val  = ipk1(target);
     if(val == -1 || val == 0)    puts("ZERO-CROSS. IP 1st Round Failed!");
     else {

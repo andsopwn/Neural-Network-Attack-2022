@@ -35,3 +35,5 @@ catch me
     fclose(fid);
     rethrow(me);
 end
+
+%data = transpose(data);
