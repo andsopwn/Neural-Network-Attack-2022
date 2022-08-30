@@ -7,7 +7,7 @@ fid = fopen(filename, 'r');
 %trNum = num;
 
 for i=1:trNum % z의 크기 trLen * trNum
-    z(:,i)=fread(fid, trLen, 'double');
+    z(:,i)=fread(fid, trLen, 'float32');
 end
 
 fclose(fid);

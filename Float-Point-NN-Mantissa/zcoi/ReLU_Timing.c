@@ -4,12 +4,12 @@
 int main() {
     FILE    *RFP;
     float   **data;
-    int     trLen = 24000;
-    int     trNum = 200;
+    int     trLen = 5000;
+    int     trNum = 100;
 
-    int     loc[200] = { 0, };
+    int     loc[100] = { 0, };
 
-    RFP = fopen("mlpa.bin", "rb");
+    RFP = fopen("../Trace/relu10.bin", "rb");
     data = (float**)calloc(sizeof(float*), trNum);
     for(int i = 0 ; i < trNum ; i++)
         data[i] = (float*)calloc(sizeof(float), trLen);
@@ -18,8 +18,8 @@ int main() {
         fread(data[i], sizeof(float), trLen, RFP);
     fclose(RFP); 
     for(int i = 0 ; i < trNum ; i++) {
-        for(int j = 0 ; j < 5000 ; j++) {
-            if(data[i][j] < -0.3) loc[i] = j; 
+        for(int j = 800 ; j < 4000 ; j++) {
+            if(data[i][j] < -0.2) loc[i] = j; 
         }
     }
     

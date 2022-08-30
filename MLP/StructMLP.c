@@ -33,7 +33,7 @@ void layer_free(ld *Layer) {
 }
 
 void node_output(ld *layer) {
-    for(int i = 1 ; i < LM ; i++) {
+    /*for(int i = 1 ; i < LM ; i++) {
         for(int j = 0 ; j < layer[i].num ; j++) {
             for(int k = 0 ; k < layer[i - 1].num ; k++)
                 layer[i].nd[j].output += layer[i].nd[j].weight * layer[i - 1].nd[k].output;
@@ -42,6 +42,51 @@ void node_output(ld *layer) {
     for(int i = 0 ; i < layer[1].num ; i++) {
         layer[1].nd[i].output = relu(layer[1].nd[i].output);
     }
+    */
+    layer[1].nd[0].output  = layer[0].nd[0].output * layer[1].nd[0].weight;
+    layer[1].nd[0].output += layer[0].nd[1].output * layer[1].nd[0].weight;
+    layer[1].nd[0].output += layer[0].nd[2].output * layer[1].nd[0].weight;
+ 
+    layer[1].nd[1].output  = layer[0].nd[0].output * layer[1].nd[1].weight;
+    layer[1].nd[1].output += layer[0].nd[1].output * layer[1].nd[1].weight;
+    layer[1].nd[1].output += layer[0].nd[2].output * layer[1].nd[1].weight;
+    
+    layer[1].nd[2].output  = layer[0].nd[0].output * layer[1].nd[2].weight;
+    layer[1].nd[2].output += layer[0].nd[1].output * layer[1].nd[2].weight;
+    layer[1].nd[2].output += layer[0].nd[2].output * layer[1].nd[2].weight;
+    
+    layer[1].nd[3].output  = layer[0].nd[0].output * layer[1].nd[3].weight;
+    layer[1].nd[3].output += layer[0].nd[1].output * layer[1].nd[3].weight;
+    layer[1].nd[3].output += layer[0].nd[2].output * layer[1].nd[3].weight;
+    
+    layer[1].nd[4].output  = layer[0].nd[0].output * layer[1].nd[4].weight;
+    layer[1].nd[4].output += layer[0].nd[1].output * layer[1].nd[4].weight;
+    layer[1].nd[4].output += layer[0].nd[2].output * layer[1].nd[4].weight;
+    
+    layer[1].nd[0].output  = relu(layer[1].nd[0].output);
+    layer[1].nd[1].output  = relu(layer[1].nd[1].output);
+    layer[1].nd[2].output  = relu(layer[1].nd[2].output);
+    layer[1].nd[3].output  = relu(layer[1].nd[3].output);
+    layer[1].nd[4].output  = relu(layer[1].nd[4].output);
+    
+    layer[2].nd[0].output  = layer[1].nd[0].output * layer[2].nd[0].weight;
+    layer[2].nd[0].output += layer[1].nd[1].output * layer[2].nd[0].weight;
+    layer[2].nd[0].output += layer[1].nd[2].output * layer[2].nd[0].weight;
+    layer[2].nd[0].output += layer[1].nd[3].output * layer[2].nd[0].weight;
+    layer[2].nd[0].output += layer[1].nd[4].output * layer[2].nd[0].weight;
+   
+    
+    layer[2].nd[1].output  = layer[1].nd[0].output * layer[2].nd[1].weight;
+    layer[2].nd[1].output += layer[1].nd[1].output * layer[2].nd[1].weight;
+    layer[2].nd[1].output += layer[1].nd[2].output * layer[2].nd[1].weight;
+    layer[2].nd[1].output += layer[1].nd[3].output * layer[2].nd[1].weight;
+    layer[2].nd[1].output += layer[1].nd[4].output * layer[2].nd[1].weight;
+    
+    layer[2].nd[2].output  = layer[1].nd[0].output * layer[2].nd[2].weight;
+    layer[2].nd[2].output += layer[1].nd[1].output * layer[2].nd[2].weight;
+    layer[2].nd[2].output += layer[1].nd[2].output * layer[2].nd[2].weight;
+    layer[2].nd[2].output += layer[1].nd[3].output * layer[2].nd[2].weight;
+    layer[2].nd[2].output += layer[1].nd[4].output * layer[2].nd[2].weight;
 }
 
 void node_set1(ld *layer) {
