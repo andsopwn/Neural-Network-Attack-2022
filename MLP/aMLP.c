@@ -99,9 +99,9 @@ void calVal() {
 
 int main() {
     setVal();
-    inputLayer[0] = 0;
+    inputLayer[0] = 2;
     inputLayer[1] = 0;
-    inputLayer[2] = 0;
+    inputLayer[2] = 255;
     inputLayer[3] = 0;
     inputLayer[4] = 0;
     calVal();
